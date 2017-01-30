@@ -1,6 +1,27 @@
 var router = require('express').Router()
 var Product = require('../models/product')
 
+function paginate(req, res, next) {
+  var perPage = 9;
+  var page = req.params.page
+  Product
+    .find()
+    .skip(perPage * page) //ex:- go to page 3 so skip 9 * 3 = 27 documents then display the data
+    .limit(perPage)
+    .populate('category')
+    .exec(function(err, products) {
+      Product.count().exec(function(err, count) {
+        if (err) return next(err)
+        res.render('main/product-main', {
+          products: products,
+          pages: count/perPage,
+          user: req.user
+        })
+      })
+    })
+}
+
+
 Product.createMapping(function(err, mapping) {
   if (err){
     console.log("error creating mapping")
@@ -23,10 +44,18 @@ stream.on('error', function(err) {
   console.log(err)
 })
 
-router.get('/', (req, res) => {
-  res.render('main/main', {
-    user: req.user
-  })
+router.get('/', (req, res, next) => {
+  if (req.user) {
+    paginate(req, res , next)
+  } else {
+    res.render('main/main', {
+      user: req.user
+    })
+  }
+})
+
+router.get('/page/:page', function(req, res, next) {
+  paginate(req, res, next)
 })
 
 router.route('/search')
