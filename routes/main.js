@@ -12,12 +12,45 @@ Product.createMapping(function(err, mapping) {
 })
 
 var stream = Product.synchronize()
+var count = 0;
+stream.on('data', function(err, doc) {
+  count++
+})
+stream.on('close', function() {
+  console.log('indexed '+ count + ' documents!')
+})
+stream.on('error', function(err) {
+  console.log(err)
+})
 
 router.get('/', (req, res) => {
   res.render('main/main', {
     user: req.user
   })
 })
+
+router.route('/search')
+    .post((req, res, next) => {
+      res.redirect('/search?q='+ req.body.q)
+    })
+    .get((req, res, next) => {
+      if (req.query.q){
+        Product.search({
+          query_string: {query: req.query.q}
+        }, function(err, results) {
+          if (err) return next(err)
+          console.log(results);
+          var data = results.hits.hits.map(function(hit) {
+            return hit
+          })
+          res.render('main/search-result', {
+            query: req.query.q,
+            data:data
+          })
+          // res.json(data)
+        })
+      }
+    })
 
 router.get('/products/:id', (req, res, next) => {
   Product
