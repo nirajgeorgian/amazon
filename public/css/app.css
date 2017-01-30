@@ -1,0 +1,15 @@
+body {
+  padding-top: 55px;
+  padding-bottom: 20px;
+}
+
+.navbar-profile {
+  display: inline-block;
+  height: 25px;
+  padding-top: -20px;
+  padding-right: 8px;
+}
+
+.profile {
+  margin-top: 20px;
+}

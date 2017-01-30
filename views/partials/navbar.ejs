@@ -1,0 +1,42 @@
+<nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">Amazon</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav navbar-right">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Categories</a>
+            <ul class="dropdown-menu">
+            <% for (var i = 0; i < categories.length; i++) { %>
+              <li><a href="/products/<%= categories[i]._id %>"><%=categories[i].name %></a></li>
+            <% } %>
+            </ul>
+          </li>
+          <% if(!user) { %>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Signup / Login</a>
+            <ul class="dropdown-menu">
+              <li><a href="/signup">Signup</a></li>
+              <li><a href="/login">Login</a></li>
+            </ul>
+          </li>
+      <% } else  { %>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="<%= user.profile.picture%>" class="img-rounded navbar-profile" alt="<%= user.profile.name %>"><%= user.profile.name %></a>
+            <ul class="dropdown-menu">
+              <li><a href="/profile">Profile</a></li>
+              <li><a href="/logout">Logout</a></li>
+            </ul>
+          </li>
+      <% } %>
+      </ul>
+    </div>
+  </div>
+</nav>

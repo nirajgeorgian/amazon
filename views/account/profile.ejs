@@ -1,0 +1,19 @@
+<% layout('boilerplate') %>
+
+<div class="container">
+  <div class="row">
+    <div class="col-sm-6 col-md-4 profile">
+      <img src="<%= user.profile.picture %>" alt="<%= user.profile.name %>" class="img-circle img-responsive img-center">
+      <br>
+      <p>Name: <%= user.profile.name %></p>
+      <p>Email: <%= user.email %></p>
+      <% if (user.address === "" || typeof user.address === 'undefined') { %>
+        <p>Address: You have no address</p>
+      <% } else  { %>
+        <p>Address: <%= user.address %></p>
+      <% } %>
+
+      <a href="/edit-profile" class="btn btn-primary btn-lg">Edit Profile</a>
+    </div>
+  </div>
+</div>
