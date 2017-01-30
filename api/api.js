@@ -27,4 +27,14 @@ router.get('/:name', (req, res, next) => {
       res.json({message: "Success"})
     })
 
+router.post('/search', (req, res, next) => {
+  console.log(req.body.search_term);
+  Product.search({
+    query_string: {query: req.body.search_term}
+  }, function(err, result) {
+    if (err) return next(err)
+    res.json(result)
+  })
+})
+
 module.exports = router
