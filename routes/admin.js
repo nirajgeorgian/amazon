@@ -5,7 +5,8 @@ router.route('/add-category')
     .get((req, res, next) => {
       res.render('admin/add-category', {
         message: req.flash('success'),
-        failure: req.flash('failure')
+        failure: req.flash('failure'),
+        user: req.user
       })
     })
     .post((req, res, next) => {
