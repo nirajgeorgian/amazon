@@ -14,7 +14,14 @@ var passport = require('passport')
 var secret = require('./config/secret')
 var User = require('./models/user')
 var Category = require('./models/category')
+var middleware = require('./middleware/middlewares')
 var app = express()
+
+// Connect to database
+mongoose.connect(secret.database, (err) => {
+  if (err) return err;
+  console.log("Successfully connected to database")
+})
 
 // Middleware
 app.use(express.static(path.join(__dirname, 'public')))
@@ -28,10 +35,14 @@ app.use(session({
   secret: secret.secretKey,
   store: new MongoStore({url:secret.database , autoReconnect: true})
 }))
+app.use(flash())
+app.use(passport.initialize())
+app.use(passport.session())
 app.use(function(req, res, next) {
   res.locals.user = req.user
   next()
 })
+app.use(middleware)
 app.use(function(req, res, next) {
   Category.find({}, function(err, categories) {
     if (err) return next(err)
@@ -39,9 +50,6 @@ app.use(function(req, res, next) {
     next()
   })
 })
-app.use(flash())
-app.use(passport.initialize())
-app.use(passport.session())
 app.engine('ejs', ejsMate)
 app.set('view engine', 'ejs')
 // Routes
@@ -53,12 +61,6 @@ app.use(mainRoutes)
 app.use(userRoutes)
 app.use(adminRoute)
 app.use('/api',apiRoutes)
-
-// Connect to database
-mongoose.connect(secret.database, (err) => {
-  if (err) return err;
-  console.log("Successfully connected to database")
-})
 
 app.listen(secret.port, (err) => {
   if (err) throw err;

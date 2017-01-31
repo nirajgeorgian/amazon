@@ -1,5 +1,6 @@
 var router = require('express').Router()
 var Product = require('../models/product')
+var Cart = require('../models/cart')
 
 function paginate(req, res, next) {
   var perPage = 9;
@@ -74,7 +75,8 @@ router.route('/search')
           })
           res.render('main/search-result', {
             query: req.query.q,
-            data:data
+            data:data,
+            user: req.user
           })
           // res.json(data)
         })
@@ -103,6 +105,33 @@ router.get('/product/:id', (req, res, next) => {
       user: req.user
     })
   })
+})
+
+router.post('/product/:product_id', (req, res, next) => {
+  Cart.findOne({owner: req.user._id}, function(err, cart) {
+    cart.items.push({
+      item: req.body.product_id,
+      price: parseFloat(req.body.priceValue),
+      quantity: parseInt(req.body.quantity)
+    })
+    cart.total = (cart.total + parseFloat(req.body.priceValue)).toFixed(2)
+    cart.save((err) => {
+      if (err) return next(err)
+      return res.redirect('/cart')
+    })
+  })
+})
+
+router.get('/cart', (req, res, next) => {
+  Cart
+    .findOne({owner: req.user._id})
+    .populate('items.item')
+    .exec((err, foundCart) => {
+      if (err) return next(err)
+      return res.render('main/cart', {
+        cart: foundCart
+      })
+    })
 })
 
 module.exports = router

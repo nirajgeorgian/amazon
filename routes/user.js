@@ -1,32 +1,46 @@
 var router = require('express').Router()
 var passport = require('passport')
+var async = require('async')
+var Cart = require('../models/cart')
 var passportConfig = require('../config/passport')
 var User = require('../models/user')
 
 router.route('/signup')
  .post((req, res, next) => {
-  var user = new User()
-  user.profile.name = req.body.name
-  user.email = req.body.email
-  user.password = req.body.password
-  user.profile.picture = user.gravatar() // coming from custom method of mongoose
+   async.waterfall([
+     function(callback) {
+       var user = new User()
+       user.profile.name = req.body.name
+       user.email = req.body.email
+       user.password = req.body.password
+       user.profile.picture = user.gravatar() // coming from custom method of mongoose
 
-  User.findOne({email: req.body.email}, (err, userExist) => {
-    if (userExist) {
-      req.flash("errors", "User already exists with " + user.email)
-      return res.redirect('/signup')
-    } else {
-      user.save((err, user) => {
-        if (err) return next(err)
-          req.flash("success", "Successfully created account.")
-          req.logIn(user, (err) => {  // Adding session and cookie to our usr who successfully sign up
-            if (err) return next(err)
-            res.redirect('/profile')
-          })
-        })
-      }
-    })
-  })
+       User.findOne({email: req.body.email}, (err, userExist) => {
+         if (userExist) {
+           req.flash("errors", "User already exists with " + user.email)
+           return res.redirect('/signup')
+         } else {
+           user.save((err, user) => {
+             if (err) return next(err)
+               req.flash("success", "Successfully created account.")
+               callback(null, user)
+             })
+           }
+         })
+     },
+     function(user) {
+       var cart = new Cart()
+       cart.owner = user._id,
+       cart.save(function(err) {
+         if (err) return next(err)
+         req.logIn(user, (err) => {  // Adding session and cookie to our usr who successfully sign up
+           if (err) return next(err)
+           res.redirect('/profile')
+         })
+       })
+     }     
+   ])
+ })
   .get((req, res) => {
     res.render('account/signup', {
       errors: req.flash("errors")

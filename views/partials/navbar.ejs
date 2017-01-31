@@ -42,6 +42,11 @@
             </ul>
           </li>
       <% } %>
+      <% if(user) { %>
+        <li><a href="/cart"><span class="glyphicon glyphicon-shopping-cart" aria-hidden="true"><%= cart %></span></a></li>
+      <% } else { %>
+          <li><a href="/cart"><span class="glyphicon glyphicon-shopping-cart" aria-hidden="true">0</span></a></li>
+      <% } %>
       </ul>
     </div>
   </div>
