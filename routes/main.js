@@ -1,6 +1,7 @@
 var router = require('express').Router()
 var Product = require('../models/product')
 var Cart = require('../models/cart')
+var stripe = require('stripe')('sk_test_CIs5rVjhH1lbHNBcqeNOsSuO')
 
 function paginate(req, res, next) {
   var perPage = 9;
@@ -122,6 +123,19 @@ router.post('/product/:product_id', (req, res, next) => {
   })
 })
 
+router.post('/remove', (req, res, next) => {
+  Cart.findOne({owner: req.user._id}, (err, foundCart) => {
+    if (err) return next(err)
+    foundCart.items.pull(String(req.body.item))
+    foundCart.total = (foundCart.total - parseFloat(req.body.price)).toFixed(2)
+    foundCart.save((err, saved) => {
+      if (err) return err
+      req.flash("remove", "Successfully removed from cart")
+      res.redirect('/cart')
+    })
+  })
+})
+
 router.get('/cart', (req, res, next) => {
   Cart
     .findOne({owner: req.user._id})
@@ -129,9 +143,26 @@ router.get('/cart', (req, res, next) => {
     .exec((err, foundCart) => {
       if (err) return next(err)
       return res.render('main/cart', {
-        cart: foundCart
+        foundCart: foundCart,
+        remove: req.flash('remove')
       })
     })
+})
+
+router.post('/payment', (req, res, next) => {
+  var stripeToken = req.body.stripeToken
+  var currentCharges = Math.round(req.body.stripeCharges * 100)
+
+  stripe.customers.create({
+    source: stripeToken,
+  }).then(function(customer) {
+    return stripe.charges.create({
+      amount: currentCharges,
+      currency: 'usd',
+      customer: customer.id
+    })
+  })
+  res.redirect('/profile')
 })
 
 module.exports = router

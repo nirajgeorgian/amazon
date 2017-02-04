@@ -1,0 +1,132 @@
+
+
+2017-02-04 09:49                                                  Page 1
+
+
+
+
+
+  }
+  },
+  })
+{
+}
+})
+})
+})
+})
+}))
+app.engine('ejs', ejsMate)
+app.listen(secret.port, (err) => {
+app.set('view engine', 'ejs')
+app.use(adminRoute)
+app.use('/api',apiRoutes)
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({extended: true}))
+app.use(cookieParser())
+app.use(express.static(path.join(__dirname, 'public')))
+app.use(flash())
+app.use(function(req, res, next) {
+app.use(function(req, res, next) {
+app.use(mainRoutes)
+app.use(middleware)
+app.use(morgan('dev'))
+app.use(passport.initialize())
+app.use(passport.session())
+app.use(session({
+app.use(userRoutes)
+    "async": "^2.1.4",
+  "author": "",
+    "bcrypt-nodejs": "0.0.3",
+    "bluebird": "^3.4.7",
+    "body-parser": "^1.15.2",
+  Category.find({}, function(err, categories) {
+    "connect-mongo": "^1.3.2",
+// Connect to database
+  console.log("Running on 127.0.0.1:3030")
+  console.log("Successfully connected to database")
+    "cookie-parser": "^1.4.3",
+  "dependencies": {
+  "description": "",
+    "ejs": "^2.5.5",
+    "ejs-mate": "^2.3.0",
+    "express": "^4.14.0",
+    "express-flash": "0.0.2",
+    "express-session": "^1.15.0",
+    "faker": "^3.1.0",
+  if (err) return err;
+    if (err) return next(err)
+  if (err) throw err;
+  "license": "ISC",
+  "main": "index.js",
+
+
+
+
+
+
+
+2017-02-04 09:49                                                  Page 2
+
+
+// Middleware
+    "mongoose": "^4.7.6",
+mongoose.connect(secret.database, (err) => {
+mongoose.Promise = require('bluebird')
+    "morgan": "^1.7.0",
+  "name": "amazon",
+    next()
+  next()
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0",
+  resave: true,
+    res.locals.categories = categories
+  res.locals.user = req.user
+// Routes
+  saveUninitialized: true,
+  "scripts": {
+  secret: secret.secretKey,
+  store: new MongoStore({url:secret.database , autoReconnect: true})
+    "stripe": "^4.15.0"
+    "test": "echo \"Error: no test specified\" && exit 1"
+var adminRoute = require('./routes/admin')
+var apiRoutes = require('./api/api')
+var app = express()
+var bodyParser = require('body-parser')
+var Category = require('./models/category')
+var cookieParser = require('cookie-parser')
+var ejsMate = require('ejs-mate')
+var ejs = require('ejs')
+var express = require('express')
+var flash = require('express-flash')
+var mainRoutes = require('./routes/main')
+var middleware = require('./middleware/middlewares')
+var mongoose = require('mongoose')
+var MongoStore = require('connect-mongo/es5')(session);
+var morgan = require('morgan')
+var passport = require('passport')
+var path = require('path')
+var secret = require('./config/secret')
+var session = require('express-session')
+var User = require('./models/user')
+var userRoutes = require('./routes/user')
+  "version": "1.0.0",
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
