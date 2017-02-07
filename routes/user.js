@@ -38,7 +38,7 @@ router.route('/signup')
            res.redirect('/profile')
          })
        })
-     }     
+     }
    ])
  })
   .get((req, res) => {
@@ -60,14 +60,17 @@ router.route('/login')
       failureFlash: true
     }))
 
-router.route('/profile')
-    .get((req, res) => {
-      User.findOne({_id: req.user._id}, function(err, user) {
-        if (err) return err
-        res.render('account/profile', {
-          user: user
+router.get('/profile', passportConfig.isAuthenticated, (req, res, next) => {
+      User
+        .findOne({_id: req.user._id})
+        .populate('history.item')
+        .exec(function(err, foundUser) {
+          if (err) return next(err)
+          res.render('account/profile', {
+            user: foundUser
+          })
+          // res.json(foundUser.history[0].item)
         })
-      })
     })
     .post((req, res) => {
 
